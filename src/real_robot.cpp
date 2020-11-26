@@ -1,7 +1,7 @@
 #include "diffdrive_arduino/real_robot.h"
 
-RealRobot::RealRobot()
-    : arduino("/dev/ttyUSB0", 57600, 1000)
+RealRobot::RealRobot(const Config &Cfg)
+    : arduino(Cfg.device, Cfg.baud_rate, Cfg.timeout)
 {
 
   l_wheel.pos = 0;
@@ -10,6 +10,7 @@ RealRobot::RealRobot()
   l_wheel.cmd = 0;
   l_wheel.enc = 0;
   l_wheel.velSetPt = 0;
+  l_wheel.name = Cfg.left_wheel_name;
 
   r_wheel.pos = 0;
   r_wheel.vel = 0;
@@ -17,6 +18,11 @@ RealRobot::RealRobot()
   r_wheel.cmd = 0;
   r_wheel.enc = 0;
   r_wheel.velSetPt = 0;
+  r_wheel.name = Cfg.right_wheel_name;
+
+  loop_rate = Cfg.loop_rate;
+
+
 
   arduino.sendEmptyMsg();
   // arduino.setPidValues(9,7,0,100);
@@ -24,19 +30,19 @@ RealRobot::RealRobot()
   arduino.setPidValues(30, 20, 0, 100);
 
   // connect and register the joint state interface
-  hardware_interface::JointStateHandle state_handle_a("base_to_left_wheel", &l_wheel.pos, &l_wheel.vel, &l_wheel.eff);
+  hardware_interface::JointStateHandle state_handle_a(l_wheel.name, &l_wheel.pos, &l_wheel.vel, &l_wheel.eff);
   jnt_state_interface.registerHandle(state_handle_a);
 
-  hardware_interface::JointStateHandle state_handle_b("base_to_right_wheel", &r_wheel.pos, &r_wheel.vel, &r_wheel.eff);
+  hardware_interface::JointStateHandle state_handle_b(r_wheel.name, &r_wheel.pos, &r_wheel.vel, &r_wheel.eff);
   jnt_state_interface.registerHandle(state_handle_b);
 
   registerInterface(&jnt_state_interface);
 
   // connect and register the joint position interface
-  hardware_interface::JointHandle vel_handle_a(jnt_state_interface.getHandle("base_to_left_wheel"), &l_wheel.cmd);
+  hardware_interface::JointHandle vel_handle_a(jnt_state_interface.getHandle(l_wheel.name), &l_wheel.cmd);
   jnt_vel_interface.registerHandle(vel_handle_a);
 
-  hardware_interface::JointHandle vel_handle_b(jnt_state_interface.getHandle("base_to_right_wheel"), &r_wheel.cmd);
+  hardware_interface::JointHandle vel_handle_b(jnt_state_interface.getHandle(r_wheel.name), &r_wheel.cmd);
   jnt_vel_interface.registerHandle(vel_handle_b);
 
   registerInterface(&jnt_vel_interface);

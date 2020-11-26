@@ -6,8 +6,22 @@
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "real_robot");
+  ros::NodeHandle n("~");
 
-  RealRobot robot;
+  RealRobot::Config robotCfg;
+
+  if (!n.getParam("left_wheel_name", robotCfg.left_wheel_name))
+  {
+    robotCfg.left_wheel_name = "left_wheel";
+  }
+
+  if (!n.getParam("right_wheel_name", robotCfg.right_wheel_name))
+  {
+    robotCfg.right_wheel_name = "right_wheel";
+  }
+
+
+  RealRobot robot(robotCfg);
   controller_manager::ControllerManager cm(&robot);
 
   ros::AsyncSpinner spinner(1);

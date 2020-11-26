@@ -8,6 +8,21 @@
 class RealRobot : public hardware_interface::RobotHW
 {
 
+public:
+  struct Config
+  {
+    std::string left_wheel_name;
+    std::string right_wheel_name;
+    float loop_rate = 30;
+    std::string device = "/dev/ttyUSB0";
+    int baud_rate = 57600;
+    int timeout = 1000;
+  };
+
+
+
+private:
+
   struct Wheel
   {
     int enc;
@@ -17,6 +32,7 @@ class RealRobot : public hardware_interface::RobotHW
     double eff;
     double velSetPt;
     double rads_per_count = 2*M_PI/1920;
+    std::string name;
 
 
     void Update(int NewEncVal)
@@ -36,7 +52,7 @@ class RealRobot : public hardware_interface::RobotHW
 
 
 public:
-  RealRobot();
+  RealRobot(const Config &Cfg);
 
   void read();
   void write();
@@ -56,6 +72,6 @@ private:
   ros::Time time;
   ros::Duration period;
 
-  float loop_rate = 30;
+  float loop_rate;
   
 };

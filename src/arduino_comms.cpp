@@ -1,6 +1,6 @@
 #include "diffdrive_arduino/arduino_comms.h"
+#include <ros/console.h>
 #include <sstream>
-#include <iostream>
 #include <cstdlib>
 
 void ArduinoComms::sendEmptyMsg()
@@ -8,42 +8,42 @@ void ArduinoComms::sendEmptyMsg()
     std::string response = sendMsg("\r");
 }
 
-void ArduinoComms::readEncoderValues(int &Val1, int &Val2)
+void ArduinoComms::readEncoderValues(int &val_1, int &val_2)
 {
     std::string response = sendMsg("e\r");
 
     std::string delimiter = " ";
-    size_t delPos = response.find(delimiter);
-    std::string token1 = response.substr(0, delPos);
-    std::string token2 = response.substr(delPos + delimiter.length());
+    size_t del_pos = response.find(delimiter);
+    std::string token_1 = response.substr(0, del_pos);
+    std::string token_2 = response.substr(del_pos + delimiter.length());
 
-    Val1 = std::atoi(token1.c_str());
-    Val2 = std::atoi(token2.c_str());
+    val_1 = std::atoi(token_1.c_str());
+    val_2 = std::atoi(token_2.c_str());
 }
 
-void ArduinoComms::setMotorValues(int Val1, int Val2)
+void ArduinoComms::setMotorValues(int val_1, int val_2)
 {
     std::stringstream ss;
-    ss << "m " << Val1 << " " << Val2 << "\r";
-    sendMsg(ss.str(), false);
+    ss << "m " << val_1 << " " << val_2 << "\r";
+    sendMsg(ss.str(), true);
 }
 
-void ArduinoComms::setPidValues(float Kp, float Kd, float Ki, float Ko)
+void ArduinoComms::setPidValues(float k_p, float k_d, float k_i, float k_o)
 {
     std::stringstream ss;
-    ss << "u " << Kp << ":" << Kd << ":" << Ki << ":" << Ko << "\r";
+    ss << "u " << k_p << ":" << k_d << ":" << k_i << ":" << k_o << "\r";
     sendMsg(ss.str());
 }
 
-std::string ArduinoComms::sendMsg(const std::string &MsgToSend, bool PrintOutput)
+std::string ArduinoComms::sendMsg(const std::string &msg_to_send, bool print_output)
 {
-    serialConn.write(MsgToSend);
-    std::string response = serialConn.readline();
+    serial_conn_.write(msg_to_send);
+    std::string response = serial_conn_.readline();
 
-    if (PrintOutput)
+    if (print_output)
     {
-        std::cout << "Sent: " << MsgToSend << std::endl;
-        std::cout << "Received: " << response << std::endl;
+        ROS_INFO_STREAM("Sent: " << msg_to_send);
+        ROS_INFO_STREAM("Received: " << response);
     }
 
     return response;

@@ -1,27 +1,24 @@
-#include "ros/ros.h"
-
-#include "diffdrive_arduino/real_robot.h"
+#include <ros/ros.h>
 #include <controller_manager/controller_manager.h>
+#include "diffdrive_arduino/real_robot.h"
 
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "real_robot");
   ros::NodeHandle n("~");
 
-  RealRobot::Config robotCfg;
+  RealRobot::Config robot_cfg;
 
-  if (!n.getParam("left_wheel_name", robotCfg.left_wheel_name))
-  {
-    robotCfg.left_wheel_name = "left_wheel";
-  }
+  // Attempt to retrieve parameters. If they don't exist, the default values from the struct will be used
+  n.getParam("left_wheel_name", robot_cfg.left_wheel_name);
+  n.getParam("right_wheel_name", robot_cfg.right_wheel_name);
+  n.getParam("baud_rate", robot_cfg.baud_rate);
+  n.getParam("device", robot_cfg.device);
+  n.getParam("enc_counts_per_rev", robot_cfg.enc_counts_per_rev);
+  n.getParam("robot_loop_rate", robot_cfg.loop_rate);
+  
 
-  if (!n.getParam("right_wheel_name", robotCfg.right_wheel_name))
-  {
-    robotCfg.right_wheel_name = "right_wheel";
-  }
-
-
-  RealRobot robot(robotCfg);
+  RealRobot robot(robot_cfg);
   controller_manager::ControllerManager cm(&robot);
 
   ros::AsyncSpinner spinner(1);

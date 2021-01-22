@@ -7,25 +7,8 @@
 
 
 RealRobot::RealRobot()
-    : 
-    // arduino_(cfg.device, cfg.baud_rate, cfg.timeout),
-    arduino_("/dev/ttyUSB0", 57600, 1000),
-    // l_wheel_(cfg.left_wheel_name, cfg.enc_counts_per_rev),
-    // r_wheel_(cfg.right_wheel_name, cfg.enc_counts_per_rev),
-    // l_wheel_("l_wheel",1920),
-    // r_wheel_("r_wheel",1920)
-    l_wheel_("base_to_left_wheel",1920),
-    r_wheel_("base_to_right_wheel",1920)
-    // clk(Clk)
-{
-
-  time_ = std::chrono::system_clock::now();
-
-  // loop_rate_ = cfg.loop_rate;
-  loop_rate_ = 30;
-
-
-}
+    : logger_(rclcpp::get_logger("RealRobot"))
+{}
 
 
 
@@ -37,7 +20,26 @@ return_type RealRobot::configure(const hardware_interface::HardwareInfo & info)
     return return_type::ERROR;
   }
 
+  RCLCPP_INFO(logger_, "Configuring...");
 
+  time_ = std::chrono::system_clock::now();
+
+  cfg_.left_wheel_name = info_.hardware_parameters["left_wheel_name"];
+  cfg_.right_wheel_name = info_.hardware_parameters["right_wheel_name"];
+  cfg_.loop_rate = std::stof(info_.hardware_parameters["loop_rate"]);
+  cfg_.device = info_.hardware_parameters["device"];
+  cfg_.baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
+  cfg_.timeout = std::stoi(info_.hardware_parameters["timeout"]);
+  cfg_.enc_counts_per_rev = std::stoi(info_.hardware_parameters["enc_counts_per_rev"]);
+
+  // Set up the wheels
+  l_wheel_.setup(cfg_.left_wheel_name, cfg_.enc_counts_per_rev);
+  r_wheel_.setup(cfg_.right_wheel_name, cfg_.enc_counts_per_rev);
+
+  // Set up the Arduino
+  arduino_.setup(cfg_.device, cfg_.baud_rate, cfg_.timeout);  
+
+  RCLCPP_INFO(logger_, "Finished Configuration");
 
   status_ = hardware_interface::status::CONFIGURED;
   return return_type::OK;
@@ -72,12 +74,12 @@ std::vector<hardware_interface::CommandInterface> RealRobot::export_command_inte
 
 return_type RealRobot::start()
 {
+  RCLCPP_INFO(logger_, "Starting Controller...");
 
   arduino_.sendEmptyMsg();
   // arduino.setPidValues(9,7,0,100);
   // arduino.setPidValues(14,7,0,100);
   arduino_.setPidValues(30, 20, 0, 100);
-
 
   status_ = hardware_interface::status::STARTED;
 
@@ -86,6 +88,7 @@ return_type RealRobot::start()
 
 return_type RealRobot::stop()
 {
+  RCLCPP_INFO(logger_, "Stopping Controller...");
   status_ = hardware_interface::status::STOPPED;
 
   return return_type::OK;
@@ -133,7 +136,7 @@ hardware_interface::return_type RealRobot::write()
     return return_type::ERROR;
   }
 
-  arduino_.setMotorValues(l_wheel_.cmd / l_wheel_.rads_per_count / loop_rate_, r_wheel_.cmd / r_wheel_.rads_per_count / loop_rate_);
+  arduino_.setMotorValues(l_wheel_.cmd / l_wheel_.rads_per_count / cfg_.loop_rate, r_wheel_.cmd / r_wheel_.rads_per_count / cfg_.loop_rate);
 
 
 

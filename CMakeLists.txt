@@ -23,7 +23,7 @@ find_package(pluginlib REQUIRED)
 
 
 
-add_library(real_robot SHARED src/real_robot.cpp src/wheel.cpp)
+add_library(real_robot SHARED src/real_robot.cpp src/wheel.cpp src/arduino_comms.cpp)
 
 target_include_directories(
   real_robot
@@ -43,7 +43,7 @@ pluginlib_export_plugin_description_file(hardware_interface robot_hardware.xml)
 
 
 
-add_library(fake_robot SHARED src/fake_robot.cpp src/wheel.cpp )
+add_library(fake_robot SHARED src/fake_robot.cpp src/wheel.cpp)
 set_property(TARGET fake_robot PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(

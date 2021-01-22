@@ -4,17 +4,9 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 
 
-
 FakeRobot::FakeRobot()
-    : 
-    l_wheel_("base_to_left_wheel",1920),
-    r_wheel_("base_to_right_wheel",1920)
-{
-
-  time_ = std::chrono::system_clock::now();
-}
-
-
+  : logger_(rclcpp::get_logger("FakeRobot"))
+{}
 
 
 
@@ -23,6 +15,23 @@ return_type FakeRobot::configure(const hardware_interface::HardwareInfo & info)
   if (configure_default(info) != return_type::OK) {
     return return_type::ERROR;
   }
+
+  RCLCPP_INFO(logger_, "Configuring...");
+
+  time_ = std::chrono::system_clock::now();
+
+  cfg_.left_wheel_name = info_.hardware_parameters["left_wheel_name"];
+  cfg_.right_wheel_name = info_.hardware_parameters["right_wheel_name"];
+
+
+  // Set up the wheels
+  // Note: It doesn't matter that we haven't set encoder counts per rev
+  // since the fake robot bypasses the encoder code completely
+
+  l_wheel_.setup(cfg_.left_wheel_name, cfg_.enc_counts_per_rev);
+  r_wheel_.setup(cfg_.right_wheel_name, cfg_.enc_counts_per_rev);
+
+  RCLCPP_INFO(logger_, "Finished Configuration");
 
   status_ = hardware_interface::status::CONFIGURED;
   return return_type::OK;
@@ -57,6 +66,7 @@ std::vector<hardware_interface::CommandInterface> FakeRobot::export_command_inte
 
 return_type FakeRobot::start()
 {
+  RCLCPP_INFO(logger_, "Starting Controller...");
   status_ = hardware_interface::status::STARTED;
 
   return return_type::OK;
@@ -64,6 +74,7 @@ return_type FakeRobot::start()
 
 return_type FakeRobot::stop()
 {
+  RCLCPP_INFO(logger_, "Stopping Controller...");
   status_ = hardware_interface::status::STOPPED;
 
   return return_type::OK;

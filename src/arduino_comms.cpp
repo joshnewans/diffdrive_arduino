@@ -9,7 +9,8 @@ void ArduinoComms::setup(const std::string &serial_device, int32_t baud_rate, in
 {  
     serial_conn_.setPort(serial_device);
     serial_conn_.setBaudrate(baud_rate);
-    serial_conn_.setTimeout(serial::Timeout::simpleTimeout(timeout_ms));
+    serial::Timeout tt = serial::Timeout::simpleTimeout(timeout_ms);
+    serial_conn_.setTimeout(tt); // This should be inline except setTimeout takes a reference and so needs a variable
     serial_conn_.open();
     // serial_conn_.(serial_device, baud_rate, serial::Timeout::simpleTimeout(timeout_ms));
 

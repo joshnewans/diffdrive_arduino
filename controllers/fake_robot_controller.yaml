@@ -1,0 +1,22 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50  # Hz
+
+    test_controller:
+      type: diff_drive_controller/DiffDriveController
+
+    joint_state_controller:
+      type: joint_state_controller/JointStateController
+
+test_controller:
+  ros__parameters:
+    left_wheel_names: ['base_to_left_wheel']
+    right_wheel_names: ['base_to_right_wheel']
+    wheels_per_side: 1
+    wheel_separation: 0.3
+    wheel_radius: 0.05
+    base_frame_id: base_link
+    # joints:
+    #   - base_to_left_wheel
+    #   - base_to_right_wheel
+    # interface_name: velocity

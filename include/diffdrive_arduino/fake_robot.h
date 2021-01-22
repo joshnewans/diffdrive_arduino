@@ -1,5 +1,10 @@
-#ifndef REAL_ROBOT_H
-#define REAL_ROBOT_H
+#ifndef FAKE_ROBOT_H
+#define FAKE_ROBOT_H
+
+// #include <hardware_interface/joint_command_interface.hpp>
+// #include <hardware_interface/joint_state_interface.hpp>
+// #include <hardware_interface/robot_hw.hpp>
+
 
 
 #include "hardware_interface/base_interface.hpp"
@@ -9,15 +14,15 @@
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "hardware_interface/types/hardware_interface_status_values.hpp"
 
-#include "arduino_comms.h"
-#include <cstring>
+// #include <serial/serial.h>
+// #include "arduino_comms.h"
 #include "wheel.h"
 
 #include "rclcpp/rclcpp.hpp"
 
 using hardware_interface::return_type;
 
-class RealRobot : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
+class FakeRobot : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
 {
 
 public:
@@ -37,7 +42,12 @@ public:
 
 
 public:
-  RealRobot();
+  FakeRobot();
+
+
+
+
+
 
   return_type configure(const hardware_interface::HardwareInfo & info) override;
 
@@ -56,15 +66,33 @@ public:
 
 
 
+
+
+
+
+
+
+
+
+
+  // return_type read();
+  // return_type write();
+
+
+  // const rclcpp::Time &get_time() { return time_; }
+  // const rclcpp::Duration &get_period() { return period_; }
+
 private:
-  ArduinoComms arduino_;
+  // hardware_interface::StateInterface jnt_state_interface_;
+  // hardware_interface::VelocityJointInterface jnt_vel_interface_;
+  // ArduinoComms arduino_;
 
   Wheel l_wheel_;
   Wheel r_wheel_;
 
   // rclcpp::Time time_;
   // rclcpp::Duration period_ = rclcpp::Duration(0,0);
-  float loop_rate_;
+  // float loop_rate_;
 
   // rclcpp::Clock &clk;
 

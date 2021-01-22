@@ -1,49 +1,34 @@
-#include "diffdrive_arduino/real_robot.h"
+#include "diffdrive_arduino/fake_robot.h"
 
 
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 
 
 
-
-RealRobot::RealRobot()
+FakeRobot::FakeRobot()
     : 
-    // arduino_(cfg.device, cfg.baud_rate, cfg.timeout),
-    arduino_("/dev/ttyUSB0", 57600, 1000),
-    // l_wheel_(cfg.left_wheel_name, cfg.enc_counts_per_rev),
-    // r_wheel_(cfg.right_wheel_name, cfg.enc_counts_per_rev),
-    // l_wheel_("l_wheel",1920),
-    // r_wheel_("r_wheel",1920)
     l_wheel_("base_to_left_wheel",1920),
     r_wheel_("base_to_right_wheel",1920)
-    // clk(Clk)
 {
 
   time_ = std::chrono::system_clock::now();
-
-  // loop_rate_ = cfg.loop_rate;
-  loop_rate_ = 30;
-
-
 }
 
 
 
 
 
-return_type RealRobot::configure(const hardware_interface::HardwareInfo & info)
+return_type FakeRobot::configure(const hardware_interface::HardwareInfo & info)
 {
   if (configure_default(info) != return_type::OK) {
     return return_type::ERROR;
   }
 
-
-
   status_ = hardware_interface::status::CONFIGURED;
   return return_type::OK;
 }
 
-std::vector<hardware_interface::StateInterface> RealRobot::export_state_interfaces()
+std::vector<hardware_interface::StateInterface> FakeRobot::export_state_interfaces()
 {
   // We need to set up a position and a velocity interface for each wheel
 
@@ -57,7 +42,7 @@ std::vector<hardware_interface::StateInterface> RealRobot::export_state_interfac
   return state_interfaces;
 }
 
-std::vector<hardware_interface::CommandInterface> RealRobot::export_command_interfaces()
+std::vector<hardware_interface::CommandInterface> FakeRobot::export_command_interfaces()
 {
   // We need to set up a velocity command interface for each wheel
 
@@ -70,28 +55,21 @@ std::vector<hardware_interface::CommandInterface> RealRobot::export_command_inte
 }
 
 
-return_type RealRobot::start()
+return_type FakeRobot::start()
 {
-
-  arduino_.sendEmptyMsg();
-  // arduino.setPidValues(9,7,0,100);
-  // arduino.setPidValues(14,7,0,100);
-  arduino_.setPidValues(30, 20, 0, 100);
-
-
   status_ = hardware_interface::status::STARTED;
 
   return return_type::OK;
 }
 
-return_type RealRobot::stop()
+return_type FakeRobot::stop()
 {
   status_ = hardware_interface::status::STOPPED;
 
   return return_type::OK;
 }
 
-hardware_interface::return_type RealRobot::read()
+hardware_interface::return_type FakeRobot::read()
 {
 
   // TODO fix chrono duration
@@ -103,45 +81,25 @@ hardware_interface::return_type RealRobot::read()
   time_ = new_time;
 
 
-  if (!arduino_.connected())
-  {
-    return return_type::ERROR;
-  }
-
-  arduino_.readEncoderValues(l_wheel_.enc, r_wheel_.enc);
-
-  double pos_prev = l_wheel_.pos;
-  l_wheel_.pos = l_wheel_.calcEncAngle();
-  l_wheel_.vel = (l_wheel_.pos - pos_prev) / deltaSeconds;
-
-  pos_prev = r_wheel_.pos;
-  r_wheel_.pos = r_wheel_.calcEncAngle();
-  r_wheel_.vel = (r_wheel_.pos - pos_prev) / deltaSeconds;
-
-
+  // Force the wheel position
+  l_wheel_.pos = l_wheel_.pos + l_wheel_.vel * deltaSeconds;
+  r_wheel_.pos = r_wheel_.pos + r_wheel_.vel * deltaSeconds;
 
   return return_type::OK;
 
   
 }
 
-hardware_interface::return_type RealRobot::write()
+hardware_interface::return_type FakeRobot::write()
 {
 
-  if (!arduino_.connected())
-  {
-    return return_type::ERROR;
-  }
+  // Set the wheel velocities to directly match what is commanded
 
-  arduino_.setMotorValues(l_wheel_.cmd / l_wheel_.rads_per_count / loop_rate_, r_wheel_.cmd / r_wheel_.rads_per_count / loop_rate_);
+  l_wheel_.vel = l_wheel_.cmd;
+  r_wheel_.vel = r_wheel_.cmd;
 
 
-
-
-  return return_type::OK;
-
-
-  
+  return return_type::OK;  
 }
 
 
@@ -149,6 +107,6 @@ hardware_interface::return_type RealRobot::write()
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-  RealRobot,
+  FakeRobot,
   hardware_interface::SystemInterface
 )

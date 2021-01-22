@@ -9,11 +9,15 @@ class ArduinoComms
 
 
 public:
+
+  ArduinoComms()
+  {  }
+
   ArduinoComms(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms)
       : serial_conn_(serial_device, baud_rate, serial::Timeout::simpleTimeout(timeout_ms))
   {  }
 
-
+  void setup(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms);
   void sendEmptyMsg();
   void readEncoderValues(int &val_1, int &val_2);
   void setMotorValues(int val_1, int val_2);

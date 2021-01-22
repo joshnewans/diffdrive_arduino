@@ -1,7 +1,20 @@
 #include "diffdrive_arduino/arduino_comms.h"
-#include <ros/console.h>
+// #include <ros/console.h>
+#include <rclcpp/rclcpp.hpp>
 #include <sstream>
 #include <cstdlib>
+
+
+void ArduinoComms::setup(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms)
+{  
+    serial_conn_.setPort(serial_device);
+    serial_conn_.setBaudrate(baud_rate);
+    serial_conn_.setTimeout(serial::Timeout::simpleTimeout(timeout_ms));
+    serial_conn_.open();
+    // serial_conn_.(serial_device, baud_rate, serial::Timeout::simpleTimeout(timeout_ms));
+
+}
+
 
 void ArduinoComms::sendEmptyMsg()
 {
@@ -42,8 +55,8 @@ std::string ArduinoComms::sendMsg(const std::string &msg_to_send, bool print_out
 
     if (print_output)
     {
-        ROS_INFO_STREAM("Sent: " << msg_to_send);
-        ROS_INFO_STREAM("Received: " << response);
+        // RCLCPP_INFO_STREAM(logger_,"Sent: " << msg_to_send);
+        // RCLCPP_INFO_STREAM(logger_,"Received: " << response);
     }
 
     return response;

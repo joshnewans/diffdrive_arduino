@@ -18,12 +18,12 @@
 
 using hardware_interface::return_type;
 
-class RealRobot : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
+class DiffDriveArduino : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
 {
 
 
 public:
-  RealRobot();
+  DiffDriveArduino();
 
   return_type configure(const hardware_interface::HardwareInfo & info) override;
 

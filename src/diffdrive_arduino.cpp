@@ -1,4 +1,4 @@
-#include "diffdrive_arduino/real_robot.h"
+#include "diffdrive_arduino/diffdrive_arduino.h"
 
 
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
@@ -6,15 +6,15 @@
 
 
 
-RealRobot::RealRobot()
-    : logger_(rclcpp::get_logger("RealRobot"))
+DiffDriveArduino::DiffDriveArduino()
+    : logger_(rclcpp::get_logger("DiffDriveArduino"))
 {}
 
 
 
 
 
-return_type RealRobot::configure(const hardware_interface::HardwareInfo & info)
+return_type DiffDriveArduino::configure(const hardware_interface::HardwareInfo & info)
 {
   if (configure_default(info) != return_type::OK) {
     return return_type::ERROR;
@@ -45,7 +45,7 @@ return_type RealRobot::configure(const hardware_interface::HardwareInfo & info)
   return return_type::OK;
 }
 
-std::vector<hardware_interface::StateInterface> RealRobot::export_state_interfaces()
+std::vector<hardware_interface::StateInterface> DiffDriveArduino::export_state_interfaces()
 {
   // We need to set up a position and a velocity interface for each wheel
 
@@ -59,7 +59,7 @@ std::vector<hardware_interface::StateInterface> RealRobot::export_state_interfac
   return state_interfaces;
 }
 
-std::vector<hardware_interface::CommandInterface> RealRobot::export_command_interfaces()
+std::vector<hardware_interface::CommandInterface> DiffDriveArduino::export_command_interfaces()
 {
   // We need to set up a velocity command interface for each wheel
 
@@ -72,7 +72,7 @@ std::vector<hardware_interface::CommandInterface> RealRobot::export_command_inte
 }
 
 
-return_type RealRobot::start()
+return_type DiffDriveArduino::start()
 {
   RCLCPP_INFO(logger_, "Starting Controller...");
 
@@ -86,7 +86,7 @@ return_type RealRobot::start()
   return return_type::OK;
 }
 
-return_type RealRobot::stop()
+return_type DiffDriveArduino::stop()
 {
   RCLCPP_INFO(logger_, "Stopping Controller...");
   status_ = hardware_interface::status::STOPPED;
@@ -94,7 +94,7 @@ return_type RealRobot::stop()
   return return_type::OK;
 }
 
-hardware_interface::return_type RealRobot::read()
+hardware_interface::return_type DiffDriveArduino::read()
 {
 
   // TODO fix chrono duration
@@ -128,7 +128,7 @@ hardware_interface::return_type RealRobot::read()
   
 }
 
-hardware_interface::return_type RealRobot::write()
+hardware_interface::return_type DiffDriveArduino::write()
 {
 
   if (!arduino_.connected())
@@ -152,6 +152,6 @@ hardware_interface::return_type RealRobot::write()
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-  RealRobot,
+  DiffDriveArduino,
   hardware_interface::SystemInterface
 )

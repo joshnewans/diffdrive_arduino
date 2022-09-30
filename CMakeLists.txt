@@ -23,15 +23,15 @@ find_package(pluginlib REQUIRED)
 
 
 
-add_library(real_robot SHARED src/real_robot.cpp src/wheel.cpp src/arduino_comms.cpp)
+add_library(diffdrive_arduino SHARED src/diffdrive_arduino.cpp src/wheel.cpp src/arduino_comms.cpp)
 
 target_include_directories(
-  real_robot
+  diffdrive_arduino
   PRIVATE
   include
 )
 ament_target_dependencies(
-  real_robot
+  diffdrive_arduino
   hardware_interface
   controller_manager
   serial
@@ -65,7 +65,7 @@ pluginlib_export_plugin_description_file(hardware_interface fake_robot_hardware.
 
 
 install(
-  TARGETS real_robot fake_robot
+  TARGETS diffdrive_arduino fake_robot
   DESTINATION lib
 )
 
@@ -79,7 +79,7 @@ install(
 
 
 ament_export_libraries(
-  real_robot
+  diffdrive_arduino
   fake_robot
 )
 ament_export_dependencies(

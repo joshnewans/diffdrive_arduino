@@ -1,9 +1,9 @@
-<library path="real_robot">
-  <class name="real_robot/RealRobot"
-         type="RealRobot"
+<library path="diffdrive_arduino">
+  <class name="diffdrive_arduino/DiffDriveArduino"
+         type="DiffDriveArduino"
          base_class_type="hardware_interface::SystemInterface">
     <description>
-      The ROS2 Control minimal robot protocol. This is example for start porting the robot from ROS 1.
+      Hardware Interface for Differential Drive Arduino controller.
     </description>
   </class>
 </library>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>diffdrive_arduino</name>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
   <description>Provides an interface between diff_drive_controller and an Arduino.</description>
 
   <maintainer email="josh.newans@gmail.com">Josh Newans</maintainer>
@@ -21,6 +21,7 @@
   <depend>controller_manager</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
   <depend>serial</depend>
 
 

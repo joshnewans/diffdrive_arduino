@@ -3,13 +3,13 @@
 
 #include <cstring>
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_lifecycle/state.hpp"
+#include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 
-#include "hardware_interface/base_interface.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
-#include "hardware_interface/types/hardware_interface_status_values.hpp"
 
 #include "config.h"
 #include "wheel.h"
@@ -17,27 +17,28 @@
 
 
 using hardware_interface::return_type;
+using hardware_interface::CallbackReturn;
 
-class DiffDriveArduino : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
+class DiffDriveArduino : public hardware_interface::SystemInterface
 {
 
 
 public:
   DiffDriveArduino();
 
-  return_type configure(const hardware_interface::HardwareInfo & info) override;
+  CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
 
   std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
   std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
-  return_type start() override;
+  CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state) override;
 
-  return_type stop() override;
+  CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
 
-  return_type read() override;
+  return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
-  return_type write() override;
+  return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
 
 

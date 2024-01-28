@@ -42,7 +42,8 @@ hardware_interface::CallbackReturn DiffDriveArduinoHardware::on_init(
   cfg_.device = info_.hardware_parameters["device"];
   cfg_.baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
   cfg_.timeout_ms = std::stoi(info_.hardware_parameters["timeout_ms"]);
-  cfg_.enc_counts_per_rev = std::stoi(info_.hardware_parameters["enc_counts_per_rev"]);
+  cfg_.enc_counts_per_rev_l = std::stoi(info_.hardware_parameters["enc_counts_per_rev_l"]);
+  cfg_.enc_counts_per_rev_r = std::stoi(info_.hardware_parameters["enc_counts_per_rev_r"]);
   if (info_.hardware_parameters.count("pid_p") > 0)
   {
     cfg_.pid_p = std::stoi(info_.hardware_parameters["pid_p"]);
@@ -56,8 +57,8 @@ hardware_interface::CallbackReturn DiffDriveArduinoHardware::on_init(
   }
   
 
-  wheel_l_.setup(cfg_.left_wheel_name, cfg_.enc_counts_per_rev);
-  wheel_r_.setup(cfg_.right_wheel_name, cfg_.enc_counts_per_rev);
+  wheel_l_.setup(cfg_.left_wheel_name, cfg_.enc_counts_per_rev_l);
+  wheel_r_.setup(cfg_.right_wheel_name, cfg_.enc_counts_per_rev_r);
 
 
   for (const hardware_interface::ComponentInfo & joint : info_.joints)

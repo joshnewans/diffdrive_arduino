@@ -13,7 +13,10 @@ For a tutorial on how to develop a hardware interface like this, check out the v
 
 https://youtu.be/J02jEKawE5U
 
-
+## Run
+```bash
+ros2 launch diffdrive_arduino diffbot.launch.py device:=/dev/ttyUSB0
+```
 
 ## To Do
 

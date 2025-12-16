@@ -2,6 +2,8 @@
 <!-- Basic differential drive mobile base -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="diffdrive_robot">
   <xacro:arg name="prefix" default="" />
+  <xacro:arg name="use_mock_hardware" default="false" />
+  <xacro:arg name="device" default="/dev/ttyUSB0" />
 
   <xacro:include filename="$(find diffdrive_arduino)/urdf/diffbot_description.urdf.xacro" />
 
@@ -14,6 +16,6 @@
   <xacro:diffbot prefix="$(arg prefix)" />
 
   <xacro:diffbot_ros2_control
-    name="DiffBot" prefix="$(arg prefix)" />
+    name="DiffBot" prefix="$(arg prefix)" use_mock_hardware="$(arg use_mock_hardware)" device="$(arg device)"/>
 
 </robot>

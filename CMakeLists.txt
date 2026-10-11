@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 project(diffdrive_arduino)
 
-# Default to C++14
+# Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 
 
@@ -29,14 +29,15 @@ target_include_directories(
   diffdrive_arduino
   PRIVATE
   include
+  ${serial_INCLUDE_DIRS}
 )
-ament_target_dependencies(
+target_link_libraries(
   diffdrive_arduino
-  hardware_interface
-  controller_manager
-  serial
-  rclcpp
-  pluginlib
+  hardware_interface::hardware_interface
+  controller_manager::controller_manager
+  ${serial_LIBRARIES}
+  rclcpp::rclcpp
+  pluginlib::pluginlib
 )
 
 pluginlib_export_plugin_description_file(hardware_interface robot_hardware.xml)
@@ -51,12 +52,12 @@ target_include_directories(
   PRIVATE
   include
 )
-ament_target_dependencies(
+target_link_libraries(
   fake_robot
-  hardware_interface
-  controller_manager
-  rclcpp
-  pluginlib
+  hardware_interface::hardware_interface
+  controller_manager::controller_manager
+  rclcpp::rclcpp
+  pluginlib::pluginlib
 )
 
 pluginlib_export_plugin_description_file(hardware_interface fake_robot_hardware.xml)
